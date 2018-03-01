@@ -2,4 +2,4 @@
 
 Game created for the GameCodeur JAM #13
 
-With this project i have created P8Compile, a bash script to compile lua file into p8 file
+With this project i have created [P8Compile](https://github.com/Nakato53/p8compile), a bash script to compile lua file into p8 file 
