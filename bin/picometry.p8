@@ -217,6 +217,100 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- ./managers/decorsManager.lua
 function decorsInit()
 decors = {}
@@ -364,16 +458,131 @@ spots = {
 { degres= 0.6, rayon = 3},
 }
 }
+gridInit()
 end
 
 function uiUpdate()
+gridUpdate()
+end
+
+
+function gridInit()
+grid = {}
+for y=1,16 do
+grid[y] = {}
+for x=1,17 do
+grid[y][x] = {
+pos= {
+x = (x-1)*8,
+y = (y-1)*8
+},
+offset = {
+x = 0,
+y = 0
+},
+velocity = {
+x = rnd(1)-0.5,
+y = rnd(1)-0.5
+}
+
+}
+end
+end
+end
+
+function gridUpdate()
+for y=1,16 do
+for x=1,17 do
+local pt = grid[y][x]
+
+
+
+pt.offset.x += pt.velocity.x
+pt.offset.y += pt.velocity.y
+
+
+local angle = atan2(-pt.offset.x,-pt.offset.y)
+pt.velocity.x += cos(angle)*0.1
+pt.velocity.y += sin(angle)*0.1
+
+
+if(abs(pt.offset.x) < 1.0 )then
+pt.velocity.x =0
+pt.offset.x = 0
+end
+if(abs(pt.offset.y) < 1.0 )then
+pt.velocity.y =0
+pt.offset.y = 0
+end
+
+end
+end
+end
+
+function gridWave(x,y,f)
+
+if(x > 0 and x < 17 and y > 0 and y < 17) then
+
+if(x-1>1) grid[y][x-1].velocity.x = -f
+if(x+1<16) grid[y][x+1].velocity.x = f
+if(y-1>1) grid[y-1][x].velocity.y = -f
+if(y+1<16) grid[y+1][x].velocity.y = f
+
+
+if(x-1>1 and y-1 > 1) grid[y-1][x-1].velocity.x = -0.75*f
+if(x-1>1 and y-1 > 1) grid[y-1][x-1].velocity.y = -0.75*f
+
+if(x+1<16 and y+1 < 16)grid[y+1][x+1].velocity.x = 0.75*f
+if(x+1<16 and y+1 < 16)grid[y+1][x+1].velocity.y = 0.75*f
+
+
+if(x+1<16 and y-1 > 1)grid[y-1][x+1].velocity.x = 0.75*f
+if(x+1<16 and y-1 > 1)grid[y-1][x+1].velocity.y = -0.75*f
+
+
+if(x-1>1 and y+1 < 16)grid[y+1][x-1].velocity.x = -0.75*f
+if(x-1>1 and y+1 < 16 )grid[y+1][x-1].velocity.y = 0.75*f
+
+end
+
+end
+
+function gridPoint(x,y)
+if(x < 1 or x > 17 or y < 1 or y > 17) then
+local tmp= { x = x*16, y = y*16}
+return tmp
+end
+
+return {x=grid[y][x].pos.x + grid[y][x].offset.x, y = grid[y][x].pos.y + grid[y][x].offset.y }
+end
+
+function drawGridPoint(x,y)
+
+local myPoint = gridPoint(x,y)
+local rightPoint = gridPoint(x+1,y)
+local downPoint = gridPoint(x,y-1)
+
+line(myPoint.x, myPoint.y, rightPoint.x, rightPoint.y,1)
+line(myPoint.x, myPoint.y, downPoint.x, downPoint.y,1)
 
 end
 
 function uiDraw()
-rectfill(0,0,127,120,1) -- background
+rectfill(0,0,127,120,0) -- background
+
+--grid
+for y=1,16 do
+for x=1,16 do
+drawGridPoint(x,y)
+end
+end
+
 rect(0,0,127,120,12) --contour
 scoreDraw(1,122) --score
+
+
+
+
 
 print("mult:"..player.multiplier,60,122,7) --multiplier
 
@@ -687,6 +896,7 @@ cursorUpdate()
 playerUpdate()
 
 --managers Update
+uiUpdate()
 ennemiesUpdate()
 bulletsUpdate()
 particlesUpdate()
@@ -694,6 +904,8 @@ spawnersUpdate()
 decorsUpdate()
 wavesUpdate()
 cameraUpdate()
+
+
 
 
 end
@@ -740,11 +952,19 @@ particlesExplose( e.pos , e.color , 2 ,10,4 )
 scoreAdd(e.score*player.multiplier)
 if(e.life != nil ) e.life-=1
 if(e.life == nil or e.life <= 0) then
+--grid wave
+local gridx = flr(e.pos.x/8) +1
+local gridy = flr(e.pos.y/8) +1
+
+gridWave(gridx, gridy, 1)
+
 e.die(e)
 createScoreDecors(e)
 if(player.alive == true) player.kills += 1
 del(ennemies,e)
 cameraShake(1,5)
+
+
 end
 del(bullets,bullet)
 end
@@ -1753,17 +1973,17 @@ if(player.alive == true ) then
 if(player.multiplier == 1 and player.kills > 25) then
 player.multiplier = 2
 soundsPlay(sounds.bonusmultiplier)
-createTextDecors("Multplicateur x2", 50,120)
+createTextDecors("Multiplier x2", 50,120)
 end
 if(player.multiplier == 2 and player.kills > 50) then
 player.multiplier = 3
 soundsPlay(sounds.bonusmultiplier)
-createTextDecors("Multplicateur x3", 50,120)
+createTextDecors("Multiplier x3", 50,120)
 end
 if(player.multiplier == 3 and player.kills > 500) then
 player.multiplier = 10
 soundsPlay(sounds.bonusmultiplier)
-createTextDecors("Multplicateur x10", 50,120)
+createTextDecors("Multiplier x10", 50,120)
 end
 
 if(btn(0,1)) player.pos.x -= player.maxspeed
@@ -1826,67 +2046,4 @@ end
 function playerDraw()
 if(player.alive == true and (player.timer > 30 or player.timer % 2 == 0 ) ) shipDraw(player)
 end
-__sfx__
-001000000c043171001a4001a400246150c04300000000000c043000000000000000246150000000000000000c043000000000000000246150c04300000000000c0430000000000000002461500000000000c043
-001100002266312660116600f6600c660086500b65008650096500d6500e6200d6200d6200e6100c6100b6000b6000a6000b6000b6000c6000000000000000000000000000000000000000000000000000000000
-012000000d2250e7000d2250e7000d2250e7000d2250e700042250570004225057000422505700042250f1000e7000e7000d7000c7000c7000c700074000c700074000c7000c7000b7000b7000b7000b70000000
-012000000d2251e6000d2250f6000d225106000d225146000b2250b6000b2250b0000b2250b0000b2250b00000000000000000000000000000000000000000000000000000000000000000000000000000000000
-011000000c0000c025131000c0000c02513100000000c0250c0000c025131000c0000c02513100000000c0250c0000c025131000c0000c02513100000000c0250c0000c025131000c0000c02513100000000c025
-001000001d050120001400015050160001005017000170001105015000140001a050110000f000160500c0000c0000f0500c000110500f000100000f050120001505015000150001005016000140001105010000
-010a0000084400a4400c4300f42017410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-011000000767005650073500933009300143000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-01100000187531a7501c7501f750247502b7502530000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-011000101a0101c0201d0201f0101e0101b0101a01019010190101901018010170101801019010170101901021500215002150021500235002450022500205002050021500225002350024500255002550024500
-001000101a0301c0251902017020170351a0401e0451b030180551606015055170401a05019040180501905000000000000000000000000000000000000000000000000000000000000000000000000000000000
-011000201b0531a053100501b0531a0530f0501b0530c0511b0531a053100501b0531a0530f0501b0530c0511b0531a053100501b0531a0530f0501b0530c0511b0531a053100501b0531a0530f0501b0530c051
-0010000000000000001c050000000000014050000000000013050000000000016050000001e050000000000015050000000000015050000000000019050000000000020050000000000016050000001705000000
-011000003931320300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-__music__
-03 00024344
-03 00050444
-03 00020c0b
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

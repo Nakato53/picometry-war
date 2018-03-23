@@ -5,6 +5,7 @@ function gameoverInit()
 	particlesInit()
 
 	musicChange(musics.none)
+	cameraInit()
 
 end
 

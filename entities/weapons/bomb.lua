@@ -15,6 +15,7 @@ function bombFire()
 		pos = {x = player.pos.x, y= player.pos.y}
 	}
 	add(decors,tmp)
+	cameraShake(5,60)
 	player.bombCount -= 1
 	soundsPlay(sounds.bomb)
 	end

@@ -3,7 +3,7 @@ function menuInit()
 
 	particlesInit()
 	musicChange(musics.menu)
-
+	cameraInit()
 end
 
 function menuUpdate()

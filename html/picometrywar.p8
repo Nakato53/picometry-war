@@ -21,202 +21,6 @@ cls()
 currentScreen.draw()
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- ./managers/decorsManager.lua
 function decorsInit()
 decors = {}
@@ -366,9 +170,6 @@ spots = {
 }
 end
 
-function uiUpdate()
-
-end
 
 function uiDraw()
 rectfill(0,0,127,120,1) -- background
@@ -384,6 +185,8 @@ circ(110,124,3,8)
 circ(110,124,2,9)
 circ(110,124,1,10)
 print(":"..player.bombCount,116,122,7) --bomb
+
+
 end
 -- ./managers/scoreManager.lua
 function scoreInit()
@@ -560,7 +363,6 @@ pressX = {x = 50, step= 0.5}
 particlesInit()
 
 musicChange(musics.none)
-cameraInit()
 
 end
 
@@ -610,7 +412,7 @@ pressX = {x = 50, step= 0.5}
 
 particlesInit()
 musicChange(musics.menu)
-cameraInit()
+
 end
 
 function menuUpdate()
@@ -676,7 +478,6 @@ wavesInit()
 elapsedTime = 0
 
 musicChange(musics.game)
-cameraInit()
 
 end
 
@@ -693,18 +494,14 @@ particlesUpdate()
 spawnersUpdate()
 decorsUpdate()
 wavesUpdate()
-cameraUpdate()
 
 
 end
 
 function gameDraw()
 
-cameraApply()
-
 --ui
 uiDraw()
-
 
 --managers Draw
 wavesDraw()
@@ -744,7 +541,6 @@ e.die(e)
 createScoreDecors(e)
 if(player.alive == true) player.kills += 1
 del(ennemies,e)
-cameraShake(1,5)
 end
 del(bullets,bullet)
 end
@@ -907,7 +703,6 @@ rayon = 0,
 pos = {x = player.pos.x, y= player.pos.y}
 }
 add(decors,tmp)
-cameraShake(5,60)
 player.bombCount -= 1
 soundsPlay(sounds.bomb)
 end
@@ -1683,37 +1478,6 @@ shipDraw(red)
 end
 -- ./entities/particle.lua
 
--- ./entities/camera.lua
-function cameraInit()
-cam = {x = 0, y = 0, l = 0, size = 0}
-end
-
-function cameraUpdate()
-if(cam.l > 0) then
-cam.x = rnd(cam.size*2)-(cam.size)
-cam.y = rnd(cam.size*2)-(cam.size)
-else
-cam.x = 0
-cam.y = 0
-end
-cam.l -= 1
-cameraApply()
-end
-
-function cameraApply()
-camera(cam.x,cam.y)
-end
-
-function cameraReset()
-camera(0,0)
-end
-
-function cameraShake(size,length)
-if(cam.size <= size) then
-cam.l = length
-cam.size = size
-end
-end
 -- ./entities/player.lua
 function playerInit()
 
@@ -1792,9 +1556,6 @@ player.timer = 0
 currentWave =createRandomWave()
 end
 end
-
---poke(0x5f80, player.pos.x)
---poke(0x5f81, player.pos.y)
 end
 
 
@@ -1845,48 +1606,5 @@ __music__
 03 00024344
 03 00050444
 03 00020c0b
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

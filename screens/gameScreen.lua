@@ -18,6 +18,7 @@ function gameInit()
 	elapsedTime = 0
 
 	musicChange(musics.game)
+	cameraInit()
 
 end
 
@@ -28,20 +29,27 @@ function gameUpdate()
 	playerUpdate()
 
 	--managers Update
+	uiUpdate()
 	ennemiesUpdate()
 	bulletsUpdate()
 	particlesUpdate()
 	spawnersUpdate()
 	decorsUpdate()
 	wavesUpdate()
+	cameraUpdate()
+
+
 
 
 end
 
 function gameDraw()
 	
+	cameraApply()
+
 	--ui
 	uiDraw()
+
 
 	--managers Draw
 	wavesDraw()

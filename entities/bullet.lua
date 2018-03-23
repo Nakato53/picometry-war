@@ -16,10 +16,19 @@ function bulletUpdate(bullet)
 			scoreAdd(e.score*player.multiplier)
 			if(e.life != nil ) e.life-=1
 			if(e.life == nil or e.life <= 0) then
+				--grid wave
+				local gridx = flr(e.pos.x/8) +1
+				local gridy = flr(e.pos.y/8) +1
+
+				gridWave(gridx, gridy, 1)
+				
 				e.die(e)
 				createScoreDecors(e)
 				if(player.alive == true) player.kills += 1
 				del(ennemies,e)
+				cameraShake(1,5)
+
+
 			end
 			del(bullets,bullet)
 		end

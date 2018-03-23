@@ -36,17 +36,17 @@ function playerUpdate()
 		if(player.multiplier == 1 and player.kills > 25) then
 			player.multiplier = 2
 			soundsPlay(sounds.bonusmultiplier)
-			createTextDecors("Multplicateur x2", 50,120)
+			createTextDecors("Multiplier x2", 50,120)
 		end
 		if(player.multiplier == 2 and player.kills > 50)  then 
 			player.multiplier = 3
 			soundsPlay(sounds.bonusmultiplier)
-			createTextDecors("Multplicateur x3", 50,120)
+			createTextDecors("Multiplier x3", 50,120)
 		end
 		if(player.multiplier == 3 and player.kills > 500) then  
 			player.multiplier = 10
 			soundsPlay(sounds.bonusmultiplier)
-			createTextDecors("Multplicateur x10", 50,120)
+			createTextDecors("Multiplier x10", 50,120)
 		end
 
 		if(btn(0,1)) player.pos.x -= player.maxspeed
@@ -75,6 +75,9 @@ function playerUpdate()
 			currentWave =createRandomWave()
 		end
 	end
+
+	--poke(0x5f80, player.pos.x)
+	--poke(0x5f81, player.pos.y)
 end
 
 
